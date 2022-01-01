@@ -5,6 +5,7 @@ import com.example.backend.service.impl.QuestionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -15,6 +16,7 @@ public class QuestionController {
     @Autowired
     QuestionServiceImpl questionService;
 
+    @Transactional
     @PostMapping("/add_question")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus

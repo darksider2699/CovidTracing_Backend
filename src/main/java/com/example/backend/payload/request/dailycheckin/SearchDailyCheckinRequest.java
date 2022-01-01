@@ -1,15 +1,15 @@
 package com.example.backend.payload.request.dailycheckin;
 
-import com.example.backend.models.user.MedicalUserInformation;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.ManyToOne;
 import java.util.Date;
 
 @Getter
 @Setter
 public class SearchDailyCheckinRequest {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dateRecord;
     private boolean isComing;
     private boolean isAllowToCome;

@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MedicalUserRepository extends JpaRepository<MedicalUserInformation,Long> {
-    @Query("SELECT m from MedicalUserInformation  m join DailyCheckin  d join User u WHERE CONCAT(u.firstName, ' ', u.lastName) LIKE %?1% ")
+    @Query(value = "SELECT m from MedicalUserInformation  m join DailyCheckin  d join User u WHERE CONCAT(u.firstName, ' ', u.lastName) LIKE %?1% ")
     public List<MedicalUserInformation> search (String name);
 }

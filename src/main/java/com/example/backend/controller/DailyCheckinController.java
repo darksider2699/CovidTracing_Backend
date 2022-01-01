@@ -2,18 +2,16 @@ package com.example.backend.controller;
 
 import com.example.backend.models.medical_information.DailyCheckin;
 import com.example.backend.payload.request.dailycheckin.SearchDailyCheckinRequest;
-import com.example.backend.payload.request.user.EditCompanyUserRequest;
-import com.example.backend.payload.request.user.EditUserRequest;
-import com.example.backend.service.impl.CompanyUserServiceImpl;
 import com.example.backend.service.impl.DailyCheckinServiceImpl;
-import com.example.backend.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -22,6 +20,7 @@ public class DailyCheckinController {
     @Autowired
     DailyCheckinServiceImpl dailyCheckinService;
 
+    @Transactional
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
@@ -29,10 +28,12 @@ public class DailyCheckinController {
         return dailyCheckinService.findAll();
     }
 
+    @Transactional
     @GetMapping("")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
     public List<DailyCheckin> search(@RequestBody SearchDailyCheckinRequest searchDailyCheckinRequest) {
-        return dailyCheckinService.search(searchDailyCheckinRequest.getDateRecord());
+        DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return dailyCheckinService.search(ZonedDateTime.parse(searchDailyCheckinRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt));
     }
 }

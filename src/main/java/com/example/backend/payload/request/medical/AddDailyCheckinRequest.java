@@ -11,5 +11,5 @@ import java.util.Date;
 public class AddDailyCheckinRequest {
     private boolean isComing;
     private boolean isAllowToCome;
-    private @DateTimeFormat(pattern = "dd-MM-yyyy") Date dateRecord;
+    private @DateTimeFormat Date dateRecord;
 }
