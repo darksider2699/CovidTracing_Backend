@@ -1,6 +1,7 @@
 package com.example.backend.models.user;
 
 import com.example.backend.models.medical_information.DailyCheckin;
+import com.example.backend.models.medical_information.TestResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,10 @@ public class MedicalUserInformation {
     @JsonIgnore
     @OneToMany(targetEntity = DailyCheckin.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<DailyCheckin> dailyCheckinInformationList ;
+
+    @JsonIgnore
+    @OneToMany(targetEntity = TestResult.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Set<TestResult> testResultList;
 
     private int vaccinatedStatus; //0: none, 1: 1 shot, 2: 2 shot
     private Date lastVaccinatedShot;
