@@ -2,7 +2,8 @@ package com.example.backend.controller;
 
 import com.example.backend.models.medical_information.TestResult;
 import com.example.backend.payload.request.medical.TestResultRequest;
-import com.example.backend.service.impl.TestResultServiceImpl;
+import com.example.backend.payload.response.TestResultCountResponse;
+import com.example.backend.service.TestResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +18,7 @@ import java.util.Locale;
 @RequestMapping("/api/test_result")
 public class TestResultController {
     @Autowired
-    TestResultServiceImpl testResultService;
+    TestResultService testResultService;
 
     @Transactional
     @GetMapping("/all")
@@ -35,5 +36,14 @@ public class TestResultController {
         DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return testResultService.search(ZonedDateTime.parse(testResultRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt));
 
+    }
+
+    @Transactional
+    @PostMapping("/general_result")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public TestResultCountResponse getGeneralResult (@RequestBody TestResultRequest testResultRequest) {
+        DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return testResultService.getGeneralResult(ZonedDateTime.parse(testResultRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt));
     }
 }

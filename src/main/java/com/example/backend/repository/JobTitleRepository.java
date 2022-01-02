@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface JobTitleRepository extends JpaRepository<JobTitle, Long> {
     @Query("SELECT j FROM JobTitle j WHERE j.name = ?1 AND j.level = ?2")
     Optional<JobTitle> search(String name, int level);
+
+    Optional<JobTitle> findByNameAndLevel(String name, int level);
 }

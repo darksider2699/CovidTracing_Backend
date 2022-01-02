@@ -1,14 +1,18 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.models.medical_information.DailyCheckin;
+import com.example.backend.models.medical_information.EVaccineType;
 import com.example.backend.models.medical_information.TestResult;
+import com.example.backend.models.medical_information.VaccineInformation;
 import com.example.backend.models.user.MedicalUserInformation;
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
+import com.example.backend.payload.request.user.MedicalUserRequest;
 import com.example.backend.payload.response.MessageResponse;
 import com.example.backend.repository.DailyCheckinRepository;
 import com.example.backend.repository.MedicalUserRepository;
 import com.example.backend.repository.TestResultRepository;
+import com.example.backend.repository.VaccineRepository;
 import com.example.backend.service.MedicalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +33,8 @@ public class MedicalUserServiceImpl implements MedicalUserService {
     DailyCheckinRepository dailyCheckinRepository;
     @Autowired
     TestResultRepository testResultRepository;
+    @Autowired
+    VaccineRepository vaccineRepository;
 
     @Override
     public ResponseEntity<?> addDailyCheckin(AddDailyCheckinRequest addDailyCheckinRequest, Long id) {
@@ -41,6 +47,11 @@ public class MedicalUserServiceImpl implements MedicalUserService {
         dailyCheckinRepository.save(dailyCheckin);
 
         MedicalUserInformation user = optUser.get();
+
+        if (user.getLastCheckin() == null || user.getLastCheckin().before(addDailyCheckinRequest.getDateRecord())) {
+            user.setLastCheckin(addDailyCheckinRequest.getDateRecord());
+        }
+
         Set<DailyCheckin> userCheckinHistory = user.getDailyCheckinInformationList();
         userCheckinHistory.add(dailyCheckin);
         medicalUserRepository.save(user);
@@ -50,22 +61,67 @@ public class MedicalUserServiceImpl implements MedicalUserService {
 
     @Override
     public ResponseEntity<?> addListTestResult(List<TestResultRequest> testResultRequests) {
-       Set<TestResult> testResults = new HashSet<>();
-        for (TestResultRequest testResultRequest: testResultRequests
-             ) {
+        Set<TestResult> testResults = new HashSet<>();
+        for (TestResultRequest testResultRequest : testResultRequests
+        ) {
             Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(testResultRequest.getIdUser());
             if (!optUser.isPresent()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             } else {
+                MedicalUserInformation user = optUser.get();
                 TestResult temp;
+                if (user.getLastCovidTest() == null || user.getLastCovidTest().before(testResultRequest.getDateRecord())) {
+                    user.setLastCovidTest(testResultRequest.getDateRecord());
+                }
                 temp = new TestResult(testResultRequest.getDateRecord(),
-                        optUser.get(),
+                        user,
                         testResultRequest.isPositive());
                 testResults.add(temp);
+
             }
             testResultRepository.saveAllAndFlush(testResults);
         }
         return ResponseEntity.ok(new MessageResponse("Daily Checkin has just been added successfully! "));
+    }
+
+    @Override
+    public ResponseEntity<?> editUser(MedicalUserRequest editUserRequest, Long id) {
+        Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(id);
+
+        if (!optUser.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        MedicalUserInformation medicalUserInformation = optUser.get();
+
+        if (editUserRequest.getStatus() != null && editUserRequest.getVaccineRequest() != null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
+
+        if (editUserRequest.getStatus() != null) {
+            medicalUserInformation.setStatus(editUserRequest.getStatus());
+        }
+
+        if (editUserRequest.getVaccineRequest() != null) {
+
+            VaccineInformation vaccineInformation = new VaccineInformation(editUserRequest.getVaccineRequest().getDate(), EVaccineType.valueOf(editUserRequest.getVaccineRequest().getType()), medicalUserInformation);
+            vaccineRepository.save(vaccineInformation);
+            if (medicalUserInformation.getLastVaccinatedShot() == null || medicalUserInformation.getLastVaccinatedShot().before(editUserRequest.getVaccineRequest().getDate())) {
+                medicalUserInformation.setLastVaccinatedShot(editUserRequest.getVaccineRequest().getDate());
+
+            }
+            if (medicalUserInformation.getVaccinatedStatus() == null) {
+                medicalUserInformation.setVaccinatedStatus(1);
+            } else {
+                medicalUserInformation.setVaccinatedStatus(medicalUserInformation.getVaccinatedStatus() + 1);
+            }
+        }
+
+        medicalUserRepository.save(medicalUserInformation);
+
+        return ResponseEntity.ok(new MessageResponse("Medical information has just been updated! "));
+
+
     }
 
 

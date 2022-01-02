@@ -15,4 +15,5 @@ public interface TestResultRepository extends JpaRepository<TestResult,Long> {
 
     @Query(value = "SELECT j FROM TestResult j")
     List<TestResult> findAll();
+
 }

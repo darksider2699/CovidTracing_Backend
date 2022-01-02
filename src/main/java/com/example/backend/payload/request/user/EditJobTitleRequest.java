@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class EditJobTitleRequest {
     private String name;
-    private int level;
+    private Integer level;
 }

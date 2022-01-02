@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
+import com.example.backend.payload.request.user.MedicalUserRequest;
 import com.example.backend.service.impl.MedicalUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class MedicalUserController {
     MedicalUserServiceImpl medicalUserService;
 
     @Transactional
-    @PutMapping("/{id}")
+    @PutMapping("/daily_checkin/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
     public ResponseEntity<?> addDailyCheckin(@RequestBody AddDailyCheckinRequest addDailyCheckinRequest, @PathVariable Long id) {
@@ -31,5 +32,13 @@ public class MedicalUserController {
     @ResponseStatus
     public ResponseEntity<?> addListTestResult(@RequestBody List<TestResultRequest> testResultRequests) {
         return medicalUserService.addListTestResult(testResultRequests);
+    }
+
+    @Transactional
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity<?> editUser(@RequestBody MedicalUserRequest editUserRequest, @PathVariable Long id) {
+        return medicalUserService.editUser(editUserRequest, id);
     }
 }

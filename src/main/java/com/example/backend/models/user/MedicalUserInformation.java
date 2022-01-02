@@ -2,6 +2,7 @@ package com.example.backend.models.user;
 
 import com.example.backend.models.medical_information.DailyCheckin;
 import com.example.backend.models.medical_information.TestResult;
+import com.example.backend.models.medical_information.VaccineInformation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,10 +12,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "medical_user_information",
-        uniqueConstraints = {
-
-        })
+@Table()
 @Getter
 @Setter
 public class MedicalUserInformation {
@@ -25,6 +23,7 @@ public class MedicalUserInformation {
 
     @OneToOne(targetEntity = User.class)
     private User user;
+
     @JsonIgnore
     @OneToMany(targetEntity = DailyCheckin.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<DailyCheckin> dailyCheckinInformationList ;
@@ -33,10 +32,14 @@ public class MedicalUserInformation {
     @OneToMany(targetEntity = TestResult.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<TestResult> testResultList;
 
-    private int vaccinatedStatus; //0: none, 1: 1 shot, 2: 2 shot
+    @JsonIgnore
+    @OneToMany(targetEntity = VaccineInformation.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Set<VaccineInformation> vaccineInformations;
+
+    private Integer vaccinatedStatus; //0: none, 1: 1 shot, 2: 2 shot
     private Date lastVaccinatedShot;
     private Date lastCovidTest;
-    private int status; // Covid status - 0 = safe, 1 = F1, 2 = F2
+    private Integer status; // Covid status - 0 = safe, 1 = F1, 2 = F2
     private Date lastCheckin;
     private Date lastCheckout;
 

@@ -19,7 +19,7 @@ public class JobTitle {
     @Column(length = 20)
     private String name;
 
-    private int level;
+    private Integer level;
 
     @ManyToMany(targetEntity = CompanyUserInformation.class, mappedBy = "jobTitles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<CompanyUserInformation> users;
@@ -27,7 +27,7 @@ public class JobTitle {
     public JobTitle() {
     }
 
-    public JobTitle(String name, int level) {
+    public JobTitle(String name, Integer level) {
         this.name = name;
         this.level = level;
     }
