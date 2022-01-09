@@ -13,7 +13,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/test_result")
 public class TestResultController {
@@ -45,5 +47,12 @@ public class TestResultController {
     public TestResultCountResponse getGeneralResult (@RequestBody TestResultRequest testResultRequest) {
         DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return testResultService.getGeneralResult(ZonedDateTime.parse(testResultRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt));
+    }
+    @Transactional
+    @GetMapping("/all_result")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public Set<TestResultCountResponse> getAllGeneralTestResult() {
+        return testResultService.getAllGeneralTestResult();
     }
 }

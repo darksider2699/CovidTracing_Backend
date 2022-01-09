@@ -32,7 +32,7 @@ import java.util.Arrays;
         prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     static final Long MAX_AGE_SECS = 3600L;
-    @Value("${localhost:3000}")
+    @Value("${http://localhost:3000}")
     String[] allowedOrigins;
 
     @Autowired
@@ -76,23 +76,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Bean
-    protected CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
-        corsConfiguration.setAllowedMethods(Arrays.asList(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name(),
-                HttpMethod.PATCH.name(),
-                HttpMethod.OPTIONS.name()
-        ));
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setMaxAge(MAX_AGE_SECS);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return source;
-    }
+//    @Bean
+//    protected CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
+//        corsConfiguration.setAllowedOrigins(Arrays.asList(allowedOrigins));
+//        corsConfiguration.setAllowedMethods(Arrays.asList(
+//                HttpMethod.GET.name(),
+//                HttpMethod.POST.name(),
+//                HttpMethod.PUT.name(),
+//                HttpMethod.DELETE.name(),
+//                HttpMethod.PATCH.name(),
+//                HttpMethod.OPTIONS.name()
+//        ));
+//        corsConfiguration.addAllowedHeader("*");
+//        corsConfiguration.setAllowCredentials(true);
+//        corsConfiguration.setMaxAge(MAX_AGE_SECS);
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//        return source;
+//    }
 }

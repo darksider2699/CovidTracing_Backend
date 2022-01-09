@@ -1,6 +1,7 @@
 package com.example.backend.models.job_title;
 
 import com.example.backend.models.user.CompanyUserInformation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "job_title", schema = "testdb")
+@Table()
 @Getter
 @Setter
 public class JobTitle {
@@ -21,6 +22,7 @@ public class JobTitle {
 
     private Integer level;
 
+    @JsonIgnore
     @ManyToMany(targetEntity = CompanyUserInformation.class, mappedBy = "jobTitles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<CompanyUserInformation> users;
 

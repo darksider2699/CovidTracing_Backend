@@ -26,9 +26,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
     JobTitleRepository jobTitleRepository;
     @Autowired
     DepartmentRepository departmentRepository;
-    private static final String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-            + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
-    private static final Pattern pattern = Pattern.compile(regexPattern);
+    final Pattern EMAIL_REGEX = Pattern.compile("[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", Pattern.CASE_INSENSITIVE);
 
     public ResponseEntity<?> editUser(EditCompanyUserRequest editCompanyUserRequest, Long id) {
         Optional<CompanyUserInformation> opUser = companyUserRepository.findById(id);
@@ -36,7 +34,7 @@ public class CompanyUserServiceImpl implements CompanyUserService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         CompanyUserInformation user = opUser.get();
-        if (editCompanyUserRequest.getCompanyEmail() != null && !editCompanyUserRequest.getCompanyEmail().isEmpty() && editCompanyUserRequest.getCompanyEmail().matches(regexPattern)) {
+        if (editCompanyUserRequest.getCompanyEmail() != null && !editCompanyUserRequest.getCompanyEmail().isEmpty() && EMAIL_REGEX.matcher(editCompanyUserRequest.getCompanyEmail()).matches()) {
             user.setCompanyEmail(editCompanyUserRequest.getCompanyEmail());
         }
         if (editCompanyUserRequest.getJobTitleRequest() != null) {

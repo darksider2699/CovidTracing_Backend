@@ -4,6 +4,7 @@ import com.example.backend.models.medical_information.DailyCheckin;
 import com.example.backend.models.medical_information.TestResult;
 import com.example.backend.models.medical_information.VaccineInformation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,7 +41,10 @@ public class MedicalUserInformation {
     private Date lastVaccinatedShot;
     private Date lastCovidTest;
     private Integer status; // Covid status - 0 = safe, 1 = F1, 2 = F2
-    private Date lastCheckin;
+
+    @OneToOne
+    @JsonIgnoreProperties("medicalUserInformation")
+    private DailyCheckin lastCheckin;
     private Date lastCheckout;
 
 }

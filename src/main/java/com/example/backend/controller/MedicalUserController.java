@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
 import com.example.backend.payload.request.user.MedicalUserRequest;
+import com.example.backend.payload.response.GetAllMedicalUserInformationResponse;
 import com.example.backend.service.impl.MedicalUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/user/medical_user")
 public class MedicalUserController {
@@ -24,6 +26,14 @@ public class MedicalUserController {
     @ResponseStatus
     public ResponseEntity<?> addDailyCheckin(@RequestBody AddDailyCheckinRequest addDailyCheckinRequest, @PathVariable Long id) {
         return medicalUserService.addDailyCheckin(addDailyCheckinRequest, id);
+    }
+
+    @Transactional
+    @GetMapping("/daily_checkin/all")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public GetAllMedicalUserInformationResponse getAll() {
+        return medicalUserService.getAllmedicalUserInformation();
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import com.example.backend.models.user.MedicalUserInformation;
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
 import com.example.backend.payload.request.user.MedicalUserRequest;
+import com.example.backend.payload.response.GetAllMedicalUserInformationResponse;
 import com.example.backend.payload.response.MessageResponse;
 import com.example.backend.repository.DailyCheckinRepository;
 import com.example.backend.repository.MedicalUserRepository;
@@ -19,10 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("medicalUserService")
 
@@ -48,8 +47,9 @@ public class MedicalUserServiceImpl implements MedicalUserService {
 
         MedicalUserInformation user = optUser.get();
 
-        if (user.getLastCheckin() == null || user.getLastCheckin().before(addDailyCheckinRequest.getDateRecord())) {
-            user.setLastCheckin(addDailyCheckinRequest.getDateRecord());
+        if (user.getLastCheckin() == null || user.getLastCheckin().getDateRecord().before(addDailyCheckinRequest.getDateRecord())) {
+            DailyCheckin tempDailyCheckin = new DailyCheckin(addDailyCheckinRequest.getDateRecord(), user, addDailyCheckinRequest.isComing(), addDailyCheckinRequest.isAllowToCome());
+            user.setLastCheckin(tempDailyCheckin);
         }
 
         Set<DailyCheckin> userCheckinHistory = user.getDailyCheckinInformationList();
@@ -122,6 +122,24 @@ public class MedicalUserServiceImpl implements MedicalUserService {
         return ResponseEntity.ok(new MessageResponse("Medical information has just been updated! "));
 
 
+    }
+
+    @Override
+    public GetAllMedicalUserInformationResponse getAllmedicalUserInformation() {
+        List<MedicalUserInformation> medicalUserInformationList = medicalUserRepository.findAll();
+        Integer numberOfUser = medicalUserInformationList.size();
+        Integer checkedInNumber = (int) medicalUserInformationList.stream().filter(index -> {
+            Calendar lastCheckin = Calendar.getInstance();
+            if (index.getLastCheckin() != null) {
+                lastCheckin.setTime(index.getLastCheckin().getDateRecord());
+                Calendar cal = Calendar.getInstance();
+                return lastCheckin.get(Calendar.DATE) == cal.get(Calendar.DATE) && lastCheckin.get(Calendar.MONTH) == cal.get(Calendar.MONTH) && lastCheckin.get(Calendar.YEAR) == cal.get(Calendar.YEAR);
+            } else {
+                return false;
+            }
+        }).count();
+
+        return new GetAllMedicalUserInformationResponse(numberOfUser, checkedInNumber, medicalUserInformationList);
     }
 
 
