@@ -1,7 +1,7 @@
 package com.example.backend.models.user;
 
 import com.example.backend.models.Account;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +9,6 @@ import java.util.Date;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -29,7 +28,7 @@ public class User {
     @OneToOne(targetEntity = CompanyUserInformation.class, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private CompanyUserInformation companyUserInformation;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("user")
     @OneToOne(targetEntity = MedicalUserInformation.class, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private MedicalUserInformation medicalUserInformation;
 

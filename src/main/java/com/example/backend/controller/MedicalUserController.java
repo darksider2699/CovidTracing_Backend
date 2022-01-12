@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
+import com.example.backend.payload.request.medical.AddDailyCheckoutRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
 import com.example.backend.payload.request.user.MedicalUserRequest;
 import com.example.backend.payload.response.GetAllMedicalUserInformationResponse;
@@ -50,5 +51,13 @@ public class MedicalUserController {
     @ResponseStatus
     public ResponseEntity<?> editUser(@RequestBody MedicalUserRequest editUserRequest, @PathVariable Long id) {
         return medicalUserService.editUser(editUserRequest, id);
+    }
+
+    @Transactional
+    @PutMapping("/daily_checkout/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity<?> addDailyCheckout(@RequestBody AddDailyCheckoutRequest addDailyCheckoutRequest, @PathVariable Long id) {
+        return medicalUserService.addDailyCheckout(addDailyCheckoutRequest, id);
     }
 }

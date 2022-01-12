@@ -2,6 +2,7 @@ package com.example.backend.models.medical_information;
 
 import com.example.backend.models.department.Department;
 import com.example.backend.models.user.MedicalUserInformation;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(   uniqueConstraints = {@UniqueConstraint(columnNames = {"dateRecord", "medical_user_information_id"})}
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"dateRecord", "medical_user_information_id"})}
 )
 @Getter
 @Setter
@@ -20,6 +21,7 @@ public class DailyCheckin {
 
     private Date dateRecord;
 
+    @JsonIgnoreProperties({"dailyCheckinInformationList", "lastCheckin"})
     @ManyToOne(targetEntity = MedicalUserInformation.class)
     MedicalUserInformation medicalUserInformation;
 

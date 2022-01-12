@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/user/daily_checkin")
 public class DailyCheckinController {
     @Autowired

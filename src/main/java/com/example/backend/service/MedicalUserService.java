@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
+import com.example.backend.payload.request.medical.AddDailyCheckoutRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
 import com.example.backend.payload.request.user.MedicalUserRequest;
 import com.example.backend.payload.response.GetAllMedicalUserInformationResponse;
@@ -13,5 +14,6 @@ public interface MedicalUserService {
     ResponseEntity<?> addListTestResult(List<TestResultRequest> testResultRequest);
     ResponseEntity<?> editUser(MedicalUserRequest editUserRequest, Long id);
     GetAllMedicalUserInformationResponse getAllmedicalUserInformation();
+    ResponseEntity<?> addDailyCheckout(AddDailyCheckoutRequest addDailyCheckoutRequest, Long id);
 
 }

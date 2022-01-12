@@ -1,9 +1,9 @@
 package com.example.backend.models.user;
 
+import com.example.backend.models.medical_information.DailyCheckout;
 import com.example.backend.models.medical_information.DailyCheckin;
 import com.example.backend.models.medical_information.TestResult;
 import com.example.backend.models.medical_information.VaccineInformation;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,15 +25,19 @@ public class MedicalUserInformation {
     @OneToOne(targetEntity = User.class)
     private User user;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("medicalUserInformation")
     @OneToMany(targetEntity = DailyCheckin.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<DailyCheckin> dailyCheckinInformationList ;
 
-    @JsonIgnore
+    @JsonIgnoreProperties({"medicalUserInformation", "contact"})
+    @OneToMany(targetEntity = DailyCheckout.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<DailyCheckout> dailyCheckouts;
+
+    @JsonIgnoreProperties("medicalUserInformation")
     @OneToMany(targetEntity = TestResult.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<TestResult> testResultList;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("medicalUserInformation")
     @OneToMany(targetEntity = VaccineInformation.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<VaccineInformation> vaccineInformations;
 
@@ -45,6 +49,9 @@ public class MedicalUserInformation {
     @OneToOne
     @JsonIgnoreProperties("medicalUserInformation")
     private DailyCheckin lastCheckin;
-    private Date lastCheckout;
+
+    @OneToOne
+    @JsonIgnoreProperties({"medicalUserInformation", "contact"})
+    private DailyCheckout lastCheckout;
 
 }

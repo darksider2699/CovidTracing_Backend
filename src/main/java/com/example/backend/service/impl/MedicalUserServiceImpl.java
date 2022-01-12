@@ -1,27 +1,22 @@
 package com.example.backend.service.impl;
 
-import com.example.backend.models.medical_information.DailyCheckin;
-import com.example.backend.models.medical_information.EVaccineType;
-import com.example.backend.models.medical_information.TestResult;
-import com.example.backend.models.medical_information.VaccineInformation;
+import com.example.backend.models.medical_information.*;
 import com.example.backend.models.user.MedicalUserInformation;
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
+import com.example.backend.payload.request.medical.AddDailyCheckoutRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
 import com.example.backend.payload.request.user.MedicalUserRequest;
 import com.example.backend.payload.response.GetAllMedicalUserInformationResponse;
 import com.example.backend.payload.response.MessageResponse;
-import com.example.backend.repository.DailyCheckinRepository;
-import com.example.backend.repository.MedicalUserRepository;
-import com.example.backend.repository.TestResultRepository;
-import com.example.backend.repository.VaccineRepository;
+import com.example.backend.repository.*;
 import com.example.backend.service.MedicalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service("medicalUserService")
 
@@ -34,6 +29,8 @@ public class MedicalUserServiceImpl implements MedicalUserService {
     TestResultRepository testResultRepository;
     @Autowired
     VaccineRepository vaccineRepository;
+    @Autowired
+    DailyCheckoutRepository dailyCheckoutRepository;
 
     @Override
     public ResponseEntity<?> addDailyCheckin(AddDailyCheckinRequest addDailyCheckinRequest, Long id) {
@@ -142,5 +139,31 @@ public class MedicalUserServiceImpl implements MedicalUserService {
         return new GetAllMedicalUserInformationResponse(numberOfUser, checkedInNumber, medicalUserInformationList);
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<?> addDailyCheckout(AddDailyCheckoutRequest addDailyCheckoutRequest, Long id) {
+
+        List<MedicalUserInformation> medicalUserInformationList = medicalUserRepository.findByIdIn(addDailyCheckoutRequest.getListIdContactToday());
+        Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(id);
+        if (optUser.isPresent()) {
+            MedicalUserInformation user = optUser.get();
+            DailyCheckout dailyCheckoutToday = new DailyCheckout();
+            dailyCheckoutToday.setDateRecord(addDailyCheckoutRequest.getDateRecord());
+            dailyCheckoutToday.setMedicalUserInformation(user);
+            dailyCheckoutToday.setContact(medicalUserInformationList);
+            dailyCheckoutRepository.save(dailyCheckoutToday);
+            Set<DailyCheckout> userCheckoutHistory = user.getDailyCheckouts();
+            userCheckoutHistory.add(dailyCheckoutToday);
+            user.setDailyCheckouts(userCheckoutHistory);
+            if (user.getLastCheckout() == null || user.getLastCheckout().getDateRecord().before(addDailyCheckoutRequest.getDateRecord())) {
+                user.setLastCheckout(dailyCheckoutToday);
+            }
+            medicalUserRepository.save(user);
+
+            return ResponseEntity.ok(new MessageResponse("Daily Checkout has just been added successfully! "));
+
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 
 }
