@@ -1,6 +1,7 @@
 package com.example.backend.repository;
 
 import com.example.backend.models.medical_information.DailyCheckout;
+import com.example.backend.models.user.MedicalUserInformation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,5 @@ public interface DailyCheckoutRepository extends JpaRepository<DailyCheckout,Lon
 
 
     List<DailyCheckout> findAllByDateRecord(LocalDate date);
+    List<DailyCheckout> findAllByMedicalUserInformation(MedicalUserInformation medicalUserInformation);
 }

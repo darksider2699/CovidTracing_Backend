@@ -122,7 +122,7 @@ public class MedicalUserServiceImpl implements MedicalUserService {
     }
 
     @Override
-    public GetAllMedicalUserInformationResponse getAllmedicalUserInformation() {
+    public ResponseEntity getAllmedicalUserInformation() {
         List<MedicalUserInformation> medicalUserInformationList = medicalUserRepository.findAll();
         Integer numberOfUser = medicalUserInformationList.size();
         Integer checkedInNumber = (int) medicalUserInformationList.stream().filter(index -> {
@@ -135,8 +135,9 @@ public class MedicalUserServiceImpl implements MedicalUserService {
                 return false;
             }
         }).count();
-
-        return new GetAllMedicalUserInformationResponse(numberOfUser, checkedInNumber, medicalUserInformationList);
+        return new ResponseEntity<>(
+                new GetAllMedicalUserInformationResponse(numberOfUser, checkedInNumber, medicalUserInformationList),
+                HttpStatus.OK);
     }
 
     @Override

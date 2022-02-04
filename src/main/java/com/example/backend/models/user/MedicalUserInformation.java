@@ -41,10 +41,12 @@ public class MedicalUserInformation {
     @OneToMany(targetEntity = VaccineInformation.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<VaccineInformation> vaccineInformations;
 
+    @ElementCollection
+    private Set<Integer> contactRelevant;
     private Integer vaccinatedStatus; //0: none, 1: 1 shot, 2: 2 shot
     private Date lastVaccinatedShot;
     private Date lastCovidTest;
-    private Integer status; // Covid status - 0 = safe, 1 = F1, 2 = F2
+    private Integer status; // Covid status - 0 = F0, 1 = F1, 2 = F2, 3 = Safe
 
     @OneToOne
     @JsonIgnoreProperties("medicalUserInformation")
@@ -53,5 +55,6 @@ public class MedicalUserInformation {
     @OneToOne
     @JsonIgnoreProperties({"medicalUserInformation", "contact"})
     private DailyCheckout lastCheckout;
+
 
 }
