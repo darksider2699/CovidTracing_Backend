@@ -10,5 +10,5 @@ import java.util.Date;
 public class TestResultRequest {
     private Long idUser;
     private Date dateRecord;
-    private boolean isPositive;
+    private Boolean isPositive;
 }

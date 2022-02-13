@@ -1,19 +1,16 @@
 package com.example.backend.controller;
 
-import com.example.backend.models.medical_information.TestResult;
 import com.example.backend.payload.request.medical.TestResultRequest;
-import com.example.backend.payload.response.TestResultCountResponse;
 import com.example.backend.service.TestResultService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -26,15 +23,15 @@ public class TestResultController {
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public List<TestResult> findAllTestResult() {
+    public ResponseEntity<?> findAllTestResult() {
         return testResultService.findAll();
     }
 
     @Transactional
-    @GetMapping("")
+    @PostMapping("")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public List<TestResult> search (@RequestBody TestResultRequest testResultRequest) {
+    public ResponseEntity<?> search (@RequestBody TestResultRequest testResultRequest) {
         DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return testResultService.search(ZonedDateTime.parse(testResultRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt));
 
@@ -44,7 +41,7 @@ public class TestResultController {
     @PostMapping("/general_result")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public TestResultCountResponse getGeneralResult (@RequestBody TestResultRequest testResultRequest) {
+    public ResponseEntity<?> getGeneralResult (@RequestBody TestResultRequest testResultRequest) {
         DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return testResultService.getGeneralResult(ZonedDateTime.parse(testResultRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt));
     }
@@ -52,7 +49,7 @@ public class TestResultController {
     @GetMapping("/all_result")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public Set<TestResultCountResponse> getAllGeneralTestResult() {
+    public ResponseEntity<?> getAllGeneralTestResult() {
         return testResultService.getAllGeneralTestResult();
     }
 }

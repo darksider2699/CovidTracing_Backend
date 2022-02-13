@@ -10,12 +10,14 @@ import java.util.List;
 public class GetAllMedicalUserInformationResponse {
     Integer numberOfUser;
     Integer finishCheckinAmount;
+    List<Float> checkinInWeekAmount;
     List<MedicalUserInformation> medicalUserInformationList;
 
-    public GetAllMedicalUserInformationResponse(Integer numberOfUser, Integer finishCheckinAmount, List<MedicalUserInformation> medicalUserInformationList) {
+    public GetAllMedicalUserInformationResponse(Integer numberOfUser, Integer finishCheckinAmount, List<MedicalUserInformation> medicalUserInformationList, List<Float> checkinInWeekAmount) {
         this.numberOfUser = numberOfUser;
         this.finishCheckinAmount = finishCheckinAmount;
         this.medicalUserInformationList = medicalUserInformationList;
+        this.checkinInWeekAmount = checkinInWeekAmount;
     }
 
     public GetAllMedicalUserInformationResponse() {

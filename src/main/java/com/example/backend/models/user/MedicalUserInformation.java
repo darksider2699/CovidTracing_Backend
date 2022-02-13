@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -43,18 +42,8 @@ public class MedicalUserInformation {
 
     @ElementCollection
     private Set<Integer> contactRelevant;
-    private Integer vaccinatedStatus; //0: none, 1: 1 shot, 2: 2 shot
-    private Date lastVaccinatedShot;
-    private Date lastCovidTest;
+
     private Integer status; // Covid status - 0 = F0, 1 = F1, 2 = F2, 3 = Safe
-
-    @OneToOne
-    @JsonIgnoreProperties("medicalUserInformation")
-    private DailyCheckin lastCheckin;
-
-    @OneToOne
-    @JsonIgnoreProperties({"medicalUserInformation", "contact"})
-    private DailyCheckout lastCheckout;
 
 
 }

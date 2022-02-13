@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface QuestionService {
-    List<Question> findAll();
+    ResponseEntity<?> findAll();
     ResponseEntity<?> addQuestion(QuestionRequest questionRequest);
     ResponseEntity<?> updateQuestion(UpdateAnswerOfQuestionRequest updateAnswerOfQuestionRequest, Long id);
 

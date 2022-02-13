@@ -4,7 +4,7 @@ import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
 import com.example.backend.payload.request.medical.AddDailyCheckoutRequest;
 import com.example.backend.payload.request.medical.TestResultRequest;
 import com.example.backend.payload.request.user.MedicalUserRequest;
-import com.example.backend.service.impl.MedicalUserServiceImpl;
+import com.example.backend.service.MedicalUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/api/user/medical_user")
 public class MedicalUserController {
     @Autowired
-    MedicalUserServiceImpl medicalUserService;
+    MedicalUserService medicalUserService;
 
     @Transactional
     @PutMapping("/daily_checkin/{id}")
@@ -33,7 +33,7 @@ public class MedicalUserController {
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
     public ResponseEntity getAll() {
-        return medicalUserService.getAllmedicalUserInformation();
+        return medicalUserService.getAllDailyCheckinMedicalUserInformation();
     }
 
     @Transactional

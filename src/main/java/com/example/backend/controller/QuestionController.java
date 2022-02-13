@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.models.questions_answers.Question;
 import com.example.backend.payload.request.question_answer.QuestionRequest;
 import com.example.backend.payload.request.question_answer.UpdateAnswerOfQuestionRequest;
+import com.example.backend.service.QuestionService;
 import com.example.backend.service.impl.QuestionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.util.List;
 public class QuestionController {
 
     @Autowired
-    QuestionServiceImpl questionService;
+    QuestionService questionService;
 
     @Transactional
     @PostMapping("/add_question")
@@ -32,7 +33,7 @@ public class QuestionController {
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public List<Question> getAll() {
+    public ResponseEntity<?> getAll() {
         return questionService.findAll();
     }
 

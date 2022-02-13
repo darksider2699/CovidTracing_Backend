@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service("medicalUserService")
@@ -34,25 +36,19 @@ public class MedicalUserServiceImpl implements MedicalUserService {
 
     @Override
     public ResponseEntity<?> addDailyCheckin(AddDailyCheckinRequest addDailyCheckinRequest, Long id) {
+        if (addDailyCheckinRequest.getDateRecord().after(new Date())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(id);
         if (!optUser.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        DailyCheckin dailyCheckin = new DailyCheckin(addDailyCheckinRequest.getDateRecord(), optUser.get(), addDailyCheckinRequest.isComing(), addDailyCheckinRequest.isAllowToCome());
-        dailyCheckinRepository.save(dailyCheckin);
-
+        DailyCheckin dailyCheckin = new DailyCheckin(addDailyCheckinRequest.getDateRecord(), optUser.get(), addDailyCheckinRequest.getIsComing(), addDailyCheckinRequest.getIsAllowToCome());
         MedicalUserInformation user = optUser.get();
-
-        if (user.getLastCheckin() == null || user.getLastCheckin().getDateRecord().before(addDailyCheckinRequest.getDateRecord())) {
-            DailyCheckin tempDailyCheckin = new DailyCheckin(addDailyCheckinRequest.getDateRecord(), user, addDailyCheckinRequest.isComing(), addDailyCheckinRequest.isAllowToCome());
-            user.setLastCheckin(tempDailyCheckin);
-        }
-
         Set<DailyCheckin> userCheckinHistory = user.getDailyCheckinInformationList();
         userCheckinHistory.add(dailyCheckin);
         medicalUserRepository.save(user);
-
         return ResponseEntity.ok(new MessageResponse("Daily Checkin has just been added successfully! "));
     }
 
@@ -67,12 +63,9 @@ public class MedicalUserServiceImpl implements MedicalUserService {
             } else {
                 MedicalUserInformation user = optUser.get();
                 TestResult temp;
-                if (user.getLastCovidTest() == null || user.getLastCovidTest().before(testResultRequest.getDateRecord())) {
-                    user.setLastCovidTest(testResultRequest.getDateRecord());
-                }
                 temp = new TestResult(testResultRequest.getDateRecord(),
                         user,
-                        testResultRequest.isPositive());
+                        testResultRequest.getIsPositive());
                 testResults.add(temp);
 
             }
@@ -103,15 +96,7 @@ public class MedicalUserServiceImpl implements MedicalUserService {
 
             VaccineInformation vaccineInformation = new VaccineInformation(editUserRequest.getVaccineRequest().getDate(), EVaccineType.valueOf(editUserRequest.getVaccineRequest().getType()), medicalUserInformation);
             vaccineRepository.save(vaccineInformation);
-            if (medicalUserInformation.getLastVaccinatedShot() == null || medicalUserInformation.getLastVaccinatedShot().before(editUserRequest.getVaccineRequest().getDate())) {
-                medicalUserInformation.setLastVaccinatedShot(editUserRequest.getVaccineRequest().getDate());
 
-            }
-            if (medicalUserInformation.getVaccinatedStatus() == null) {
-                medicalUserInformation.setVaccinatedStatus(1);
-            } else {
-                medicalUserInformation.setVaccinatedStatus(medicalUserInformation.getVaccinatedStatus() + 1);
-            }
         }
 
         medicalUserRepository.save(medicalUserInformation);
@@ -122,21 +107,45 @@ public class MedicalUserServiceImpl implements MedicalUserService {
     }
 
     @Override
-    public ResponseEntity getAllmedicalUserInformation() {
+    public ResponseEntity getAllDailyCheckinMedicalUserInformation() {
         List<MedicalUserInformation> medicalUserInformationList = medicalUserRepository.findAll();
         Integer numberOfUser = medicalUserInformationList.size();
-        Integer checkedInNumber = (int) medicalUserInformationList.stream().filter(index -> {
-            Calendar lastCheckin = Calendar.getInstance();
-            if (index.getLastCheckin() != null) {
-                lastCheckin.setTime(index.getLastCheckin().getDateRecord());
-                Calendar cal = Calendar.getInstance();
-                return lastCheckin.get(Calendar.DATE) == cal.get(Calendar.DATE) && lastCheckin.get(Calendar.MONTH) == cal.get(Calendar.MONTH) && lastCheckin.get(Calendar.YEAR) == cal.get(Calendar.YEAR);
-            } else {
-                return false;
+        List<MedicalUserInformation> checkedInNumber = new ArrayList<>();
+        for (int i = 0; i <= medicalUserInformationList.size() - 1; i++) {
+            List<DailyCheckin> list = new ArrayList<>();
+            for (DailyCheckin dailyCheckin : medicalUserInformationList.get(i).getDailyCheckinInformationList()) {
+                list.add(dailyCheckin);
             }
-        }).count();
+            if (!list.isEmpty()) {
+                list.sort(Comparator.comparing(DailyCheckin::getDateRecord).reversed());
+                Calendar lastCheckin = Calendar.getInstance();
+                lastCheckin.setTime(list.get(0).getDateRecord());
+                Calendar today = Calendar.getInstance();
+                if (today.get(Calendar.DATE) == lastCheckin.get(Calendar.DATE) && today.get(Calendar.MONTH) == lastCheckin.get(Calendar.MONTH) && today.get(Calendar.YEAR) == lastCheckin.get(Calendar.YEAR)) {
+                    checkedInNumber.add(medicalUserInformationList.get(i));
+                }
+            }
+        }
+
+        Calendar cal = Calendar.getInstance();
+        //cal.setTime(new Date());//Set specific Date if you want to
+        List<Date> dateOfWeek = new ArrayList<>();
+        List<Float> percentageCheckinOfWeek = new ArrayList<>();
+        for (int i = Calendar.MONDAY; i <= Calendar.FRIDAY; i++) {
+            cal.set(Calendar.DAY_OF_WEEK, i);
+            dateOfWeek.add(cal.getTime());//Returns Date
+        }
+        for (int i = 0; i <= dateOfWeek.size() - 1; i++) {
+            LocalDate localDate = dateOfWeek.get(i).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            List<DailyCheckin> listCheckinThatday = new ArrayList<>(dailyCheckinRepository.search(localDate));
+            Integer userCheckedInAmount = listCheckinThatday.size();
+            Float percentage = Float.valueOf(userCheckedInAmount) / Float.valueOf(numberOfUser ) * 100;
+            percentageCheckinOfWeek.add(percentage);
+        }
+
+
         return new ResponseEntity<>(
-                new GetAllMedicalUserInformationResponse(numberOfUser, checkedInNumber, medicalUserInformationList),
+                new GetAllMedicalUserInformationResponse(numberOfUser, checkedInNumber.size(), medicalUserInformationList, percentageCheckinOfWeek),
                 HttpStatus.OK);
     }
 
@@ -156,9 +165,6 @@ public class MedicalUserServiceImpl implements MedicalUserService {
             Set<DailyCheckout> userCheckoutHistory = user.getDailyCheckouts();
             userCheckoutHistory.add(dailyCheckoutToday);
             user.setDailyCheckouts(userCheckoutHistory);
-            if (user.getLastCheckout() == null || user.getLastCheckout().getDateRecord().before(addDailyCheckoutRequest.getDateRecord())) {
-                user.setLastCheckout(dailyCheckoutToday);
-            }
             medicalUserRepository.save(user);
 
             return ResponseEntity.ok(new MessageResponse("Daily Checkout has just been added successfully! "));

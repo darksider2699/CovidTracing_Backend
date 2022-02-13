@@ -27,8 +27,9 @@ public class QuestionServiceImpl implements QuestionService {
     AnswerRepository answerRepository;
 
     @Override
-    public List<Question> findAll() {
-        return questionRepository.findAll();
+    public ResponseEntity findAll() {
+        return new ResponseEntity<>(
+                questionRepository.findAll(), HttpStatus.OK);
     }
 
     @Override

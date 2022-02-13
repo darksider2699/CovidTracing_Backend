@@ -12,7 +12,7 @@ public interface MedicalUserService {
     ResponseEntity<?> addDailyCheckin(AddDailyCheckinRequest addDailyCheckinRequest, Long id);
     ResponseEntity<?> addListTestResult(List<TestResultRequest> testResultRequest);
     ResponseEntity<?> editUser(MedicalUserRequest editUserRequest, Long id);
-    ResponseEntity<?> getAllmedicalUserInformation();
+    ResponseEntity<?> getAllDailyCheckinMedicalUserInformation();
     ResponseEntity<?> addDailyCheckout(AddDailyCheckoutRequest addDailyCheckoutRequest, Long id);
 
 }

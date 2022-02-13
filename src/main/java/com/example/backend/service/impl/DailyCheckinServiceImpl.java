@@ -1,13 +1,13 @@
 package com.example.backend.service.impl;
 
-import com.example.backend.models.medical_information.DailyCheckin;
 import com.example.backend.repository.DailyCheckinRepository;
 import com.example.backend.service.DailyCheckinService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service("dailyCheckinService")
 public class DailyCheckinServiceImpl implements DailyCheckinService {
@@ -15,14 +15,14 @@ public class DailyCheckinServiceImpl implements DailyCheckinService {
     DailyCheckinRepository dailyCheckinRepository;
 
     @Override
-    public List<DailyCheckin> findAll() {
-        return dailyCheckinRepository.findAll();
+    public ResponseEntity<?> findAll() {
+        return new ResponseEntity<>(dailyCheckinRepository.findAll(), HttpStatus.OK);
     }
 
     @Override
-    public List<DailyCheckin> search(String date) {
+    public ResponseEntity<?> search(String date) {
         LocalDate localDatePart = LocalDate.parse(date);
-        return dailyCheckinRepository.search(localDatePart);
+        return new ResponseEntity<>(dailyCheckinRepository.search(localDatePart), HttpStatus.OK);
     }
 
 }

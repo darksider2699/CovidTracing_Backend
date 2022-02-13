@@ -9,7 +9,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class AddDailyCheckinRequest {
-    private boolean isComing;
-    private boolean isAllowToCome;
+    private Boolean isComing;
+    private Boolean isAllowToCome;
     private @DateTimeFormat Date dateRecord;
 }
