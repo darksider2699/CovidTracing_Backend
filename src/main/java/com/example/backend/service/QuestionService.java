@@ -1,17 +1,15 @@
 package com.example.backend.service;
 
 
-import com.example.backend.models.questions_answers.Question;
 import com.example.backend.payload.request.question_answer.QuestionRequest;
-import com.example.backend.payload.request.question_answer.UpdateAnswerOfQuestionRequest;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 
 public interface QuestionService {
     ResponseEntity<?> findAll();
+    ResponseEntity<?> findById(Long id);
     ResponseEntity<?> addQuestion(QuestionRequest questionRequest);
-    ResponseEntity<?> updateQuestion(UpdateAnswerOfQuestionRequest updateAnswerOfQuestionRequest, Long id);
+    ResponseEntity<?> updateQuestion(QuestionRequest updateAnswerOfQuestionRequest, Long id);
 
 
 }
