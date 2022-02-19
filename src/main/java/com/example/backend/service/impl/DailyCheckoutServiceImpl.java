@@ -8,6 +8,7 @@ import com.example.backend.repository.DailyCheckoutRepository;
 import com.example.backend.repository.MedicalUserRepository;
 import com.example.backend.service.DailyCheckoutService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +24,20 @@ public class DailyCheckoutServiceImpl implements DailyCheckoutService {
     @Autowired
     MedicalUserRepository medicalUserRepository;
     @Override
-    public List<DailyCheckout> findAll() {
-        return dailyCheckoutRepository.findAll();
+    public ResponseEntity<?> findAll() {
+        return new ResponseEntity<>(dailyCheckoutRepository.findAll(), HttpStatus.OK);
     }
 
     @Override
-    public List<DailyCheckout> search(String date) {
+    public ResponseEntity<?> search(String date) {
         LocalDate localDatePart = LocalDate.parse(date);
-        return dailyCheckoutRepository.search(localDatePart);
+        return new ResponseEntity<>(dailyCheckoutRepository.search(localDatePart), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> searchByDateAndIdUser(String date, Long id) {
+        LocalDate localDatePart = LocalDate.parse(date);
+        return new ResponseEntity<>(dailyCheckoutRepository.searchByDateAndIdUser(localDatePart, id), HttpStatus.OK);
     }
 
     @Override

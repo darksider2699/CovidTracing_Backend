@@ -28,7 +28,7 @@ public class DailyCheckoutController {
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public List<DailyCheckout> findAllDailyCheckin() {
+    public ResponseEntity<?> findAllDailyCheckout() {
         return dailyCheckoutService.findAll();
     }
 
@@ -37,16 +37,25 @@ public class DailyCheckoutController {
     @GetMapping("")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public List<DailyCheckout> search(@RequestBody SearchDailyCheckinRequest searchDailyCheckinRequest) {
+    public ResponseEntity<?> search(@RequestBody SearchDailyCheckinRequest searchDailyCheckinRequest) {
         DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return dailyCheckoutService.search(ZonedDateTime.parse(searchDailyCheckinRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt));
+    }
+
+    @Transactional
+    @PostMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity<?> searchByDateAndIdUser(@RequestBody SearchDailyCheckinRequest searchDailyCheckinRequest, @PathVariable Long id) {
+        DateTimeFormatter dt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return dailyCheckoutService.searchByDateAndIdUser(ZonedDateTime.parse(searchDailyCheckinRequest.getDateRecord().toString(), DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz uuuu", Locale.US)).format(dt), id);
     }
 
     @Transactional
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
-    public ResponseEntity updateDailyCheckout(@RequestBody AddDailyCheckoutRequest addDailyCheckoutRequest, @PathVariable Long id) {
+    public ResponseEntity<?> updateDailyCheckout(@RequestBody AddDailyCheckoutRequest addDailyCheckoutRequest, @PathVariable Long id) {
         return dailyCheckoutService.editDailyCheckout(addDailyCheckoutRequest, id);
     }
 }

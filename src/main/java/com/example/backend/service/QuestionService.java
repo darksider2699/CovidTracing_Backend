@@ -10,6 +10,6 @@ public interface QuestionService {
     ResponseEntity<?> findById(Long id);
     ResponseEntity<?> addQuestion(QuestionRequest questionRequest);
     ResponseEntity<?> updateQuestion(QuestionRequest updateAnswerOfQuestionRequest, Long id);
-
+    ResponseEntity<?> deleteQuestion (Long id);
 
 }

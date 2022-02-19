@@ -64,5 +64,17 @@ public class QuestionServiceImpl implements QuestionService {
         return ResponseEntity.ok(new MessageResponse("Question has just been updated successfully! "));
     }
 
+    @Override
+    public ResponseEntity<?> deleteQuestion(Long id) {
+        Optional<Question> optQues = questionRepository.findById(id);
+        if (!optQues.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        else {
+            questionRepository.deleteById(id);
+            return ResponseEntity.ok(new MessageResponse("Question has just been deleted successfully! "));
+        }
+    }
+
 
 }

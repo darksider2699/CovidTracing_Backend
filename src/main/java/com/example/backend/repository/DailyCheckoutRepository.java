@@ -16,6 +16,9 @@ public interface DailyCheckoutRepository extends JpaRepository<DailyCheckout,Lon
     @Query(value = "SELECT j FROM DailyCheckout j  WHERE date_record between CONCAT(?1,' ','00:00:00') and CONCAT(?1,' ','23:59:59') ")
     List<DailyCheckout> search(LocalDate date);
 
+    @Query(value = "SELECT j FROM DailyCheckout j  WHERE date_record between CONCAT(?1,' ','00:00:00') and CONCAT(?1,' ','23:59:59') and medical_user_information_id = ?2 ")
+    List<DailyCheckout> searchByDateAndIdUser(LocalDate date, Long id);
+
     @Query(value = "SELECT j FROM DailyCheckout j")
     List<DailyCheckout> findAll();
 

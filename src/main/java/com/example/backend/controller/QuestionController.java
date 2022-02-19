@@ -49,4 +49,12 @@ public class QuestionController {
     public ResponseEntity<?> updateAnswer(@RequestBody QuestionRequest updateAnswerOfQuestionRequest, @PathVariable Long id) {
         return questionService.updateQuestion(updateAnswerOfQuestionRequest, id);
     }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity<?> deleteAnswer(@PathVariable Long id) {
+        return questionService.deleteQuestion(id);
+    }
 }
