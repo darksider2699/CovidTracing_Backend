@@ -13,7 +13,7 @@ public class AddDailyCheckoutRequest {
     private @DateTimeFormat
     Date dateRecord;
 
-    List<Long> listIdContactToday;
+    private List<Long> listIdContactToday;
 
 
 }

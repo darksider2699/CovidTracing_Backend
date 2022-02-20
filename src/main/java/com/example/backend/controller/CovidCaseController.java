@@ -14,11 +14,27 @@ import org.springframework.web.bind.annotation.*;
 public class CovidCaseController {
     @Autowired
     CovidCaseService covidCaseService;
+
     @Transactional
     @PostMapping("")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
     public ResponseEntity<?> addNewCase(@RequestBody CovidCaseRequest covidCaseRequest) {
         return covidCaseService.addCovidCase(covidCaseRequest);
+    }
+    @Transactional
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity<?> getAllCovidCase() {
+        return covidCaseService.getAllCovidCases();
+    }
+
+    @Transactional
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity<?> deleteCase(@PathVariable Long id) {
+        return covidCaseService.delete(id);
     }
 }

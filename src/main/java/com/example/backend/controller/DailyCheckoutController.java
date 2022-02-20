@@ -34,7 +34,7 @@ public class DailyCheckoutController {
 
 
     @Transactional
-    @GetMapping("")
+    @PostMapping("")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus
     public ResponseEntity<?> search(@RequestBody SearchDailyCheckinRequest searchDailyCheckinRequest) {

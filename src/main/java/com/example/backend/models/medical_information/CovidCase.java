@@ -27,13 +27,16 @@ public class CovidCase {
     @OneToOne
     private MedicalUserInformation patient;
 
+    private Integer status;
+
     public CovidCase() {
     }
 
-    public CovidCase(MedicalUserInformation patient, List<MedicalUserInformation> patientContact, Date dateRecord) {
+    public CovidCase(MedicalUserInformation patient, List<MedicalUserInformation> patientContact, Date dateRecord, Integer status) {
         this.patient = patient;
         this.patientContact = patientContact;
         this.dateRecord = dateRecord;
+        this.status = status;
     }
 
 
