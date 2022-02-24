@@ -5,4 +5,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface CompanyUserService {
     ResponseEntity<?> editUser(EditCompanyUserRequest editUserRequest, Long id);
+    ResponseEntity<?> findAll();
 }

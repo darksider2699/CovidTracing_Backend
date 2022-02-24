@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.payload.request.user.EditCompanyUserRequest;
+import com.example.backend.service.CompanyUserService;
 import com.example.backend.service.impl.CompanyUserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user/company_user")
 public class CompanyUserController {
     @Autowired
-    CompanyUserServiceImpl userService;
+    CompanyUserService userService;
 
     @Transactional
     @PutMapping("/{id}")
@@ -21,5 +22,13 @@ public class CompanyUserController {
     @ResponseStatus
     public ResponseEntity<?> editUser(@RequestBody EditCompanyUserRequest editUserRequest, @PathVariable Long id) {
         return userService.editUser(editUserRequest, id);
+    }
+
+    @Transactional
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity<?> getAllCompanyUserInformation() {
+        return userService.findAll();
     }
 }

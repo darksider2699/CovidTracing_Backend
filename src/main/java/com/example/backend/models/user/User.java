@@ -2,6 +2,7 @@ package com.example.backend.models.user;
 
 import com.example.backend.models.Account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,10 +24,11 @@ public class User {
     @OneToOne(targetEntity = Account.class, cascade = CascadeType.ALL)
     private Account account;
 
+    @JsonIgnoreProperties({"user"})
     @OneToOne(targetEntity = CompanyUserInformation.class, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private CompanyUserInformation companyUserInformation;
 
-    //@JsonIgnoreProperties("user")
+    @JsonIgnoreProperties("user")
     @JsonIgnore
     @OneToOne(targetEntity = MedicalUserInformation.class, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private MedicalUserInformation medicalUserInformation;

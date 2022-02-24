@@ -3,6 +3,7 @@ package com.example.backend.models.user;
 import com.example.backend.models.job_title.JobTitle;
 import com.example.backend.models.department.Department;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +25,7 @@ public class CompanyUserInformation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
+    @JsonIgnoreProperties({"companyUserInformation"})
     @OneToOne(targetEntity = User.class)
     private User user;
 
@@ -41,7 +42,6 @@ public class CompanyUserInformation {
             inverseJoinColumns = @JoinColumn(name = "jobTitle_id"))
 
     Set<JobTitle> jobTitles = new HashSet<>();
-    ;
 
     public CompanyUserInformation() {
     }

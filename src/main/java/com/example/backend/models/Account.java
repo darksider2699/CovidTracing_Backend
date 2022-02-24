@@ -3,6 +3,7 @@ package com.example.backend.models;
 import com.example.backend.models.role.Role;
 import com.example.backend.models.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +33,7 @@ public class Account {
     @Size(max = 120)
     private String password;
 
-    @JsonIgnore
+    @JsonIgnoreProperties({"account"})
     @OneToOne(targetEntity = User.class, mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private User user;
 

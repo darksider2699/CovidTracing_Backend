@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -36,7 +37,11 @@ public class MedicalUserServiceImpl implements MedicalUserService {
 
     @Override
     public ResponseEntity<?> addDailyCheckin(AddDailyCheckinRequest addDailyCheckinRequest, Long id) {
-        if (addDailyCheckinRequest.getDateRecord().after(new Date())) {
+        LocalDate dateRequest = addDailyCheckinRequest.getDateRecord().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        LocalDate today = new Date ().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        if (dateRequest.isAfter(today)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(id);
@@ -171,6 +176,15 @@ public class MedicalUserServiceImpl implements MedicalUserService {
 
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public ResponseEntity<?> getMedicalUserById(Long id) {
+        Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(id);
+        if (!optUser.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else return new ResponseEntity<>(medicalUserRepository.findById(id), HttpStatus.OK);
     }
 
 }

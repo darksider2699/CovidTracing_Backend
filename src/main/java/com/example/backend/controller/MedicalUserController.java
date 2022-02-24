@@ -21,6 +21,14 @@ public class MedicalUserController {
     MedicalUserService medicalUserService;
 
     @Transactional
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @ResponseStatus
+    public ResponseEntity getMedicalUserById(@PathVariable Long id) {
+        return medicalUserService.getMedicalUserById(id);
+    }
+
+    @Transactional
     @PutMapping("/daily_checkin/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     @ResponseStatus

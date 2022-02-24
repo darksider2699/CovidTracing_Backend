@@ -4,6 +4,7 @@ import com.example.backend.models.job_title.JobTitle;
 import com.example.backend.models.department.Department;
 import com.example.backend.models.user.CompanyUserInformation;
 import com.example.backend.payload.request.user.EditCompanyUserRequest;
+import com.example.backend.payload.response.GetAllMedicalUserInformationResponse;
 import com.example.backend.payload.response.MessageResponse;
 import com.example.backend.repository.CompanyUserRepository;
 import com.example.backend.repository.DepartmentRepository;
@@ -62,4 +63,12 @@ public class CompanyUserServiceImpl implements CompanyUserService {
         companyUserRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User company information updated successfully!"));
     }
+
+    @Override
+    public ResponseEntity<?> findAll() {
+         return new ResponseEntity<>(
+                 companyUserRepository.findAll(),
+                HttpStatus.OK);
+    }
+
 }

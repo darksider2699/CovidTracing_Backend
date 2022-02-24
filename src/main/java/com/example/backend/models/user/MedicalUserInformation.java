@@ -28,7 +28,7 @@ public class MedicalUserInformation {
     @OneToMany(targetEntity = DailyCheckin.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<DailyCheckin> dailyCheckinInformationList ;
 
-    @JsonIgnoreProperties({"medicalUserInformation", "contact"})
+    @JsonIgnoreProperties({"medicalUserInformation"})
     @OneToMany(targetEntity = DailyCheckout.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<DailyCheckout> dailyCheckouts;
 

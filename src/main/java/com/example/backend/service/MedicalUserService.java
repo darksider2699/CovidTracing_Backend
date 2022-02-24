@@ -14,5 +14,5 @@ public interface MedicalUserService {
     ResponseEntity<?> editUser(MedicalUserRequest editUserRequest, Long id);
     ResponseEntity<?> getAllDailyCheckinMedicalUserInformation();
     ResponseEntity<?> addDailyCheckout(AddDailyCheckoutRequest addDailyCheckoutRequest, Long id);
-
+    ResponseEntity<?> getMedicalUserById(Long id);
 }
