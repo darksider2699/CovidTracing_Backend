@@ -1,6 +1,8 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.models.medical_information.*;
+import com.example.backend.models.role.ERole;
+import com.example.backend.models.role.Role;
 import com.example.backend.models.user.MedicalUserInformation;
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
 import com.example.backend.payload.request.medical.AddDailyCheckoutRequest;
@@ -17,8 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+
 import java.util.*;
 
 @Service("medicalUserService")
@@ -31,6 +33,8 @@ public class MedicalUserServiceImpl implements MedicalUserService {
     @Autowired
     TestResultRepository testResultRepository;
     @Autowired
+    VaccineInformationRepository vaccineInformationRepository;
+    @Autowired
     VaccineRepository vaccineRepository;
     @Autowired
     DailyCheckoutRepository dailyCheckoutRepository;
@@ -40,7 +44,7 @@ public class MedicalUserServiceImpl implements MedicalUserService {
         LocalDate dateRequest = addDailyCheckinRequest.getDateRecord().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
-        LocalDate today = new Date ().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate today = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         if (dateRequest.isAfter(today)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -99,9 +103,12 @@ public class MedicalUserServiceImpl implements MedicalUserService {
 
         if (editUserRequest.getVaccineRequest() != null) {
 
-            VaccineInformation vaccineInformation = new VaccineInformation(editUserRequest.getVaccineRequest().getDate(), EVaccineType.valueOf(editUserRequest.getVaccineRequest().getType()), medicalUserInformation);
-            vaccineRepository.save(vaccineInformation);
-
+            Optional<VaccineType> vaccineType = vaccineRepository.findById(editUserRequest.getVaccineRequest().getType());
+            if(!vaccineType.isPresent()){
+                return (ResponseEntity<?>) ResponseEntity.badRequest();
+            }
+            VaccineInformation newVaccineShot = new VaccineInformation(editUserRequest.getVaccineRequest().getDate(), vaccineType.get(), medicalUserInformation);
+            vaccineInformationRepository.save(newVaccineShot);
         }
 
         medicalUserRepository.save(medicalUserInformation);
@@ -144,7 +151,7 @@ public class MedicalUserServiceImpl implements MedicalUserService {
             LocalDate localDate = dateOfWeek.get(i).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             List<DailyCheckin> listCheckinThatday = new ArrayList<>(dailyCheckinRepository.search(localDate));
             Integer userCheckedInAmount = listCheckinThatday.size();
-            Float percentage = Float.valueOf(userCheckedInAmount) / Float.valueOf(numberOfUser ) * 100;
+            Float percentage = Float.valueOf(userCheckedInAmount) / Float.valueOf(numberOfUser) * 100;
             percentageCheckinOfWeek.add(percentage);
         }
 
@@ -157,11 +164,26 @@ public class MedicalUserServiceImpl implements MedicalUserService {
     @Override
     @Transactional
     public ResponseEntity<?> addDailyCheckout(AddDailyCheckoutRequest addDailyCheckoutRequest, Long id) {
-
+        LocalDate localDateRecord = addDailyCheckoutRequest.getDateRecord().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         List<MedicalUserInformation> medicalUserInformationList = medicalUserRepository.findByIdIn(addDailyCheckoutRequest.getListIdContactToday());
         Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(id);
         if (optUser.isPresent()) {
             MedicalUserInformation user = optUser.get();
+            List<DailyCheckout> listDailyCheckoutToday = dailyCheckoutRepository.search(localDateRecord);
+
+            for (DailyCheckout checkout : listDailyCheckoutToday) {
+                List<MedicalUserInformation> contactToday = checkout.getContact();
+                if (medicalUserInformationList.contains(checkout.getMedicalUserInformation())) {
+                    if (!checkout.getContact().contains(user)) {
+                        contactToday.add(user);
+                    }
+                }
+                if (contactToday.contains(user)) {
+                    if (!medicalUserInformationList.contains(checkout.getMedicalUserInformation())) {
+                        medicalUserInformationList.add(checkout.getMedicalUserInformation());
+                    }
+                }
+            }
             DailyCheckout dailyCheckoutToday = new DailyCheckout();
             dailyCheckoutToday.setDateRecord(addDailyCheckoutRequest.getDateRecord());
             dailyCheckoutToday.setMedicalUserInformation(user);
@@ -183,8 +205,7 @@ public class MedicalUserServiceImpl implements MedicalUserService {
         Optional<MedicalUserInformation> optUser = medicalUserRepository.findById(id);
         if (!optUser.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else return new ResponseEntity<>(medicalUserRepository.findById(id), HttpStatus.OK);
+        } else return new ResponseEntity<>(medicalUserRepository.findById(id), HttpStatus.OK);
     }
 
 }

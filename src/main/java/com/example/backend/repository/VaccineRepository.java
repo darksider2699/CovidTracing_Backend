@@ -1,9 +1,11 @@
 package com.example.backend.repository;
 
-import com.example.backend.models.medical_information.VaccineInformation;
+import com.example.backend.models.medical_information.EVaccineType;
+import com.example.backend.models.medical_information.VaccineType;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface VaccineRepository extends JpaRepository<VaccineInformation, Long> {
+import java.util.Optional;
+
+public interface VaccineRepository extends JpaRepository<VaccineType, Long> {
+    Optional<VaccineType> findByName(EVaccineType name);
 }

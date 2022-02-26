@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -45,5 +46,16 @@ public class MedicalUserInformation {
 
     private Integer status; // Covid status - 0 = F0, 1 = F1, 2 = F2, 3 = Safe
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MedicalUserInformation)) return false;
+        MedicalUserInformation that = (MedicalUserInformation) o;
+        return getId().equals(that.getId());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }

@@ -19,7 +19,8 @@ public class VaccineInformation {
 
     private Date date; // date take vaccine
 
-    private EVaccineType type;
+    @OneToOne
+    private VaccineType type;
 
     @ManyToOne(targetEntity = MedicalUserInformation.class)
     MedicalUserInformation medicalUserInformation;
@@ -27,7 +28,7 @@ public class VaccineInformation {
     public VaccineInformation() {
     }
 
-    public VaccineInformation(Date date, EVaccineType type, MedicalUserInformation medicalUserInformation) {
+    public VaccineInformation(Date date, VaccineType type, MedicalUserInformation medicalUserInformation) {
         this.date = date;
         this.type = type;
         this.medicalUserInformation = medicalUserInformation;

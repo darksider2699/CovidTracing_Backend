@@ -10,5 +10,5 @@ import java.util.Date;
 public class VaccineRequest {
     private Date date; // date take vaccine
 
-    private String type;
+    private Long type;
 }
