@@ -21,7 +21,7 @@ public class MedicalUserInformation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @JsonIgnoreProperties({"medicalUserInformation"})
     @OneToOne(targetEntity = User.class)
     private User user;
 
@@ -41,8 +41,6 @@ public class MedicalUserInformation {
     @OneToMany(targetEntity = VaccineInformation.class, mappedBy = "medicalUserInformation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<VaccineInformation> vaccineInformations;
 
-    @ElementCollection
-    private Set<Integer> contactRelevant;
 
     private Integer status; // Covid status - 0 = F0, 1 = F1, 2 = F2, 3 = Safe
 

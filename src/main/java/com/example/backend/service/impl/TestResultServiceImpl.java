@@ -61,7 +61,7 @@ public class TestResultServiceImpl implements TestResultService {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             result.add(getGeneralTestResult(formatter.format(testResult.getDateRecord())));
         }
-        return new ResponseEntity<>(result.stream().sorted(Comparator.comparing(TestResultCountResponse::getDateRecord)),
+        return new ResponseEntity<>(result.stream().sorted(Comparator.comparing(TestResultCountResponse::getDateRecord).reversed()),
                 HttpStatus.OK);
     }
 

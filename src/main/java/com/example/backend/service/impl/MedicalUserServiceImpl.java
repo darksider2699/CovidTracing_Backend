@@ -1,8 +1,6 @@
 package com.example.backend.service.impl;
 
 import com.example.backend.models.medical_information.*;
-import com.example.backend.models.role.ERole;
-import com.example.backend.models.role.Role;
 import com.example.backend.models.user.MedicalUserInformation;
 import com.example.backend.payload.request.medical.AddDailyCheckinRequest;
 import com.example.backend.payload.request.medical.AddDailyCheckoutRequest;
@@ -38,6 +36,8 @@ public class MedicalUserServiceImpl implements MedicalUserService {
     VaccineRepository vaccineRepository;
     @Autowired
     DailyCheckoutRepository dailyCheckoutRepository;
+    @Autowired
+    CovidCaseRepository covidCaseRepository;
 
     @Override
     public ResponseEntity<?> addDailyCheckin(AddDailyCheckinRequest addDailyCheckinRequest, Long id) {
@@ -104,7 +104,7 @@ public class MedicalUserServiceImpl implements MedicalUserService {
         if (editUserRequest.getVaccineRequest() != null) {
 
             Optional<VaccineType> vaccineType = vaccineRepository.findById(editUserRequest.getVaccineRequest().getType());
-            if(!vaccineType.isPresent()){
+            if (!vaccineType.isPresent()) {
                 return (ResponseEntity<?>) ResponseEntity.badRequest();
             }
             VaccineInformation newVaccineShot = new VaccineInformation(editUserRequest.getVaccineRequest().getDate(), vaccineType.get(), medicalUserInformation);
@@ -182,6 +182,15 @@ public class MedicalUserServiceImpl implements MedicalUserService {
                     if (!medicalUserInformationList.contains(checkout.getMedicalUserInformation())) {
                         medicalUserInformationList.add(checkout.getMedicalUserInformation());
                     }
+                }
+            }
+            List<CovidCase> listCases = covidCaseRepository.findAll();
+            for (CovidCase covidCase : listCases) {
+                if (medicalUserInformationList.contains(covidCase.getPatient())) {
+                    user.setStatus(1);
+                    List<MedicalUserInformation> patientContact = covidCase.getPatientContact();
+                    patientContact.add(user);
+                    break;
                 }
             }
             DailyCheckout dailyCheckoutToday = new DailyCheckout();

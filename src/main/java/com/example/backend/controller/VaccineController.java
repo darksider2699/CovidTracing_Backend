@@ -1,6 +1,5 @@
 package com.example.backend.controller;
 
-import com.example.backend.payload.request.medical.TestResultRequest;
 import com.example.backend.payload.request.medical.VaccineRequest;
 import com.example.backend.service.VaccineService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -45,7 +45,7 @@ public class CovidCaseServiceImpl implements CovidCaseService {
         for (DailyCheckout dailyCheckout : dailyCheckoutOfUser
         ) {
             if (dailyCheckout.getDateRecord().after(Date.from(then.atZone(ZoneId.systemDefault())
-                    .toInstant())) && dailyCheckout.getDateRecord().before(Date.from(now.atZone(ZoneId.systemDefault())
+                    .toInstant())) && dailyCheckout.getDateRecord().before(Date.from(now.plusDays(1).atZone(ZoneId.systemDefault())
                     .toInstant()))) {
                 patientContact.addAll(dailyCheckout.getContact());
             }
@@ -85,6 +85,8 @@ public class CovidCaseServiceImpl implements CovidCaseService {
 
         }
         CovidCase covidCase = optCase.get();
+        MedicalUserInformation patient = covidCase.getPatient();
+        patient.setStatus(3);
         List<MedicalUserInformation> listContact = covidCase.getPatientContact();
         for (MedicalUserInformation user : listContact) {
             user.setStatus(3);
