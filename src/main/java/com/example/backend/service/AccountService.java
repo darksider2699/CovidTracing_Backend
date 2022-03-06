@@ -10,4 +10,6 @@ public interface AccountService {
     List<Account> findAll();
     ResponseEntity<?> changePassword(EditAccountRequest editAccountRequest, Long id);
     ResponseEntity<?> deleteAccount(Long id);
+    ResponseEntity<?> getAllRole();
+
 }

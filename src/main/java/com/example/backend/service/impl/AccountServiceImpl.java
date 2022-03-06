@@ -4,6 +4,7 @@ import com.example.backend.models.Account;
 import com.example.backend.payload.request.account.EditAccountRequest;
 import com.example.backend.payload.response.MessageResponse;
 import com.example.backend.repository.AccountRepository;
+import com.example.backend.repository.RoleRepository;
 import com.example.backend.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ public class AccountServiceImpl implements AccountService {
     AccountRepository accountRepository;
     @Autowired
     PasswordEncoder encoder;
+    @Autowired
+    RoleRepository roleRepository;
 
     @Override
     public List<Account> findAll() {
@@ -46,6 +49,11 @@ public class AccountServiceImpl implements AccountService {
         }
         accountRepository.delete(found.get());
         return new ResponseEntity<>(id, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> getAllRole() {
+        return new ResponseEntity<>(roleRepository.findAll(), HttpStatus.OK);
     }
 }
 

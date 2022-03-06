@@ -24,11 +24,19 @@ public class AccountController {
     PasswordEncoder encoder;
     @Autowired
     AccountServiceImpl accountService;
+
     @Transactional
     @GetMapping("/all")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public List<Account> getAllAccount() {
         return accountService.findAll();
+    }
+
+    @Transactional
+    @GetMapping("/role/all")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> getAllRole() {
+        return accountService.getAllRole();
     }
 
     @Transactional

@@ -131,8 +131,8 @@ public class AuthController {
         user.setCompanyUserInformation(companyUserInformation);
 
         medicalUserInformation.setUser(user);
+        medicalUserInformation.setStatus(3);
         user.setMedicalUserInformation(medicalUserInformation);
-
         account.setRoles(roles);
         accountRepository.save(account);
         userRepository.save(user);
